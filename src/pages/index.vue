@@ -1,5 +1,33 @@
 <template>
   <v-container>
+    <v-row cols="5" md="6">
+      <v-col >
+        <v-text-field
+          v-model="searchQuery"
+          label="Buscar país"
+          prepend-icon="mdi-magnify"
+          clearable
+          @click:prepend="showContinents = !showContinents"
+          density="compact"
+        >
+          <template v-slot:prepend-inner>
+            <v-list v-if="showContinents" density="compact">
+              <v-list-item
+                v-for="continent in continents"
+                :key="continent"
+                @click="filterContinent = continent; showContinents = false"
+              >
+                {{ continent }}
+              </v-list-item>
+              <v-list-item @click="filterContinent = null; showContinents = false">
+                Limpiar
+              </v-list-item>
+            </v-list>
+          </template>
+        </v-text-field>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
     <v-row>
       <v-col
         v-for="(country, index) in paginatedCountries"
@@ -29,7 +57,6 @@
     </div>
   </v-container>
 </template>
-
 <script setup>
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
@@ -37,7 +64,10 @@ import { ref, onMounted } from 'vue';
 const countries = ref([]);
 const unsplashAccessKey = 'rEY13Kw7mWyJq1sUueOfAC7IGJmWq8i3HFkA02bE'; // Reemplaza con tu Access Key
 const currentPage = ref(1);
-const itemsPerPage = 6; // Mostrar 6 items por página (2 filas x 3 columnas)
+const itemsPerPage = 6;
+const searchQuery = ref('');
+const filterContinent = ref(null);
+const showContinents = ref(false);
 
 
 const getCountryImage = async (countryName) => {
@@ -59,11 +89,30 @@ const getCountryImage = async (countryName) => {
     return null;
   }
 };
+const continents = computed(() => {
+  const continentSet = new Set();
+  countries.value.forEach(country => continentSet.add(country.continent.name));
+  return Array.from(continentSet);
+});
+
+const filteredCountries = computed(() => {
+  let filtered = countries.value;
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase();
+    filtered = filtered.filter(country => country.name.toLowerCase().includes(query));
+  }
+  if (filterContinent.value) {
+    filtered = filtered.filter(country => country.continent.name === filterContinent.value);
+  }
+  return filtered;
+});
+
 const paginatedCountries = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  return countries.value.slice(startIndex, endIndex);
+  return filteredCountries.value.slice(startIndex, endIndex);
 });
+
 onMounted(async () => {
   try {
     const response = await axios.post('https://countries.trevorblades.com/', {
