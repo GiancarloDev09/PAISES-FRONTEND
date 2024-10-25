@@ -39,7 +39,7 @@
 
           <v-menu activator="parent">
             <v-list density="compact" nav>
-              <v-list-item append-icon="mdi-cog-outline" link title="Settings" />
+              <v-list-item append-icon="mdi-cog-outline" link title="Configuraciones" to="/vista-configuraciones"/>
 
               <v-list-item append-icon="mdi-logout" link title="Cerrar Sesion" />
             </v-list>
@@ -88,6 +88,12 @@
       prependIcon: 'mdi-archive-eye',
       link: true,
       to:'/vista-dos'
+    },
+    {
+      title: 'Configuraciones',
+      prependIcon: 'mdi-cog-outline',
+      link: true,
+      to:'/vista-configuraciones'
     },
   ])
 </script>
