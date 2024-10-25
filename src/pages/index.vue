@@ -2,31 +2,31 @@
   <v-container>
     <v-row>
       <v-col
-        v-for="country in countries"
+        v-for="(country, index) in paginatedCountries"
         :key="country.code"
         cols="12"
         sm="6"
         md="4"
         lg="3"
       >
-        <v-card>
+        <v-card class="mx-auto my-2" max-width="250">
           <v-img
-            v-if="country.imageUrl"
-            :src="country.imageUrl"
+            :src="country.imageUrl || country.flagUrl"
             :alt="country.name"
-            height="200px"
-          />
-          <v-img
-            v-else
-            :src="country.flagUrl"
-            :alt="country.name"
-            height="200px"
-          />
-          <v-card-title>{{ country.name }}</v-card-title>
-          <v-card-subtitle>{{ country.continent.name }}</v-card-subtitle>
+            height="140px"
+            cover
+          ></v-img>
+
+          <v-card-item>
+            <v-card-title class="text-subtitle-1">{{ country.name }}</v-card-title>
+            <v-card-subtitle class="text-caption">{{ country.continent.name }}</v-card-subtitle>
+          </v-card-item>
         </v-card>
       </v-col>
     </v-row>
+    <div class="text-center mt-4">
+      <v-pagination v-model="currentPage" :length="Math.ceil(countries.length / itemsPerPage)" />
+    </div>
   </v-container>
 </template>
 
@@ -36,6 +36,9 @@ import { ref, onMounted } from 'vue';
 
 const countries = ref([]);
 const unsplashAccessKey = 'rEY13Kw7mWyJq1sUueOfAC7IGJmWq8i3HFkA02bE'; // Reemplaza con tu Access Key
+const currentPage = ref(1);
+const itemsPerPage = 6; // Mostrar 6 items por página (2 filas x 3 columnas)
+
 
 const getCountryImage = async (countryName) => {
   try {
@@ -56,7 +59,11 @@ const getCountryImage = async (countryName) => {
     return null;
   }
 };
-
+const paginatedCountries = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return countries.value.slice(startIndex, endIndex);
+});
 onMounted(async () => {
   try {
     const response = await axios.post('https://countries.trevorblades.com/', {
