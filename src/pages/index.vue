@@ -11,8 +11,8 @@
       >
         <v-card>
           <v-img
-            v-if="country.image"
-            :src="country.image"
+            v-if="country.imageUrl"
+            :src="country.imageUrl"
             :alt="country.name"
             height="200px"
           />
@@ -29,20 +29,19 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
 const countries = ref([]);
-const pixabayApiKey = '46718433-3e884c781f723974885da7eda'; // Reemplaza con tu clave API
+const unsplashAccessKey = 'mEY1iKva7mWFyJaistueoEACfTGjWGkGmqB5NfA20ME'; // Reemplaza con tu Access Key
 
 const getCountryImage = async (countryName) => {
   try {
-    const response = await axios.get('https://pixabay.com/api/', {
+    const response = await axios.get('https://api.unsplash.com/search/photos', {
       params: {
-        key: pixabayApiKey,
-        q: countryName,
-        image_type: 'photo',
+        client_id: unsplashAccessKey,
+        query: countryName,
         per_page: 1, // Solo necesitamos una imagen
       }
     });
-    if (response.data.hits.length > 0) {
-      return response.data.hits[0].webformatURL;
+    if (response.data.results.length > 0) {
+      return response.data.results[0].urls.regular;
     } else {
       return null; // No se encontró ninguna imagen
     }
@@ -70,7 +69,7 @@ onMounted(async () => {
 
     // Obtener la imagen para cada país
     for (const country of response.data.data.countries) {
-      country.image = await getCountryImage(country.name);
+      country.imageUrl = await getCountryImage(country.name);
     }
 
     countries.value = response.data.data.countries;
