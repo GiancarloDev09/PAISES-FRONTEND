@@ -16,6 +16,12 @@
             :alt="country.name"
             height="200px"
           />
+          <v-img
+            v-else
+            :src="country.flagUrl"
+            :alt="country.name"
+            height="200px"
+          />
           <v-card-title>{{ country.name }}</v-card-title>
           <v-card-subtitle>{{ country.continent.name }}</v-card-subtitle>
         </v-card>
@@ -29,7 +35,7 @@ import axios from 'axios';
 import { ref, onMounted } from 'vue';
 
 const countries = ref([]);
-const unsplashAccessKey = 'mEY1iKva7mWFyJaistueoEACfTGjWGkGmqB5NfA20ME'; // Reemplaza con tu Access Key
+const unsplashAccessKey = 'rEY13Kw7mWyJq1sUueOfAC7IGJmWq8i3HFkA02bE'; // Reemplaza con tu Access Key
 
 const getCountryImage = async (countryName) => {
   try {
@@ -37,13 +43,13 @@ const getCountryImage = async (countryName) => {
       params: {
         client_id: unsplashAccessKey,
         query: countryName,
-        per_page: 1, // Solo necesitamos una imagen
+        per_page: 1,
       }
     });
     if (response.data.results.length > 0) {
       return response.data.results[0].urls.regular;
     } else {
-      return null; // No se encontró ninguna imagen
+      return null;
     }
   } catch (error) {
     console.error(error);
@@ -62,17 +68,26 @@ onMounted(async () => {
             continent {
               name
             }
+            emoji
           }
         }
       `
     });
 
-    // Obtener la imagen para cada país
-    for (const country of response.data.data.countries) {
-      country.imageUrl = await getCountryImage(country.name);
-    }
+    const countriesData = response.data.data.countries;
 
-    countries.value = response.data.data.countries;
+    // Obtener imágenes y banderas en paralelo
+    await Promise.all(countriesData.map(async (country) => {
+      country.imageUrl = await getCountryImage(country.name);
+      // Si no hay imagen de Unsplash, usar la bandera
+      if (!country.imageUrl) {
+        const flagResponse = await axios.get(`https://restcountries.com/v3.1/alpha/${country.code}`);
+        country.flagUrl = flagResponse.data[0].flags.png;
+      }
+    }));
+
+    countries.value = countriesData;
+
   } catch (error) {
     console.error(error);
   }
