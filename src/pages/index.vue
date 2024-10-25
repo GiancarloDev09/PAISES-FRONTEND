@@ -41,7 +41,7 @@
           <v-img
             :src="country.imageUrl || country.flagUrl"
             :alt="country.name"
-            height="140px"
+            height="100px"
             cover
           ></v-img>
 
@@ -64,7 +64,7 @@ import { ref, onMounted } from 'vue';
 const countries = ref([]);
 const unsplashAccessKey = 'rEY13Kw7mWyJq1sUueOfAC7IGJmWq8i3HFkA02bE'; // Reemplaza con tu Access Key
 const currentPage = ref(1);
-const itemsPerPage = 6;
+const itemsPerPage = 8;
 const searchQuery = ref('');
 const filterContinent = ref(null);
 const showContinents = ref(false);
