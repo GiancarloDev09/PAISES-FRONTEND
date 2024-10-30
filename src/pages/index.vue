@@ -2,16 +2,24 @@
   <v-container>
     <v-row cols="5" md="6">
       <v-col>
-        <v-text-field
-          v-model="searchQuery"
-          placeholder="Escribe el país que deseas ver"
-          append-inner-icon="mdi-magnify"
-          single-line
-          outlined
-          clearable
-          class="search-bar"
-          @click:append-inner="showContinents = !showContinents"
-        ></v-text-field>
+        <v-row justify="center">
+  <v-col cols="12" md="6"> <!-- Ajusta el ancho con col, cols="12" ocupa todo el ancho en pantallas pequeñas -->
+    <div class="search-bar-wrapper">
+  <v-text-field
+    v-model="searchQuery"
+    placeholder="Escribe el país que deseas ver"
+    append-inner-icon="mdi-magnify"
+    single-line
+    outlined
+    clearable
+    class="search-bar"
+    @click:append-inner="showContinents = !showContinents"
+  ></v-text-field>
+</div>
+
+  </v-col>
+</v-row>
+
 
         <v-menu v-model="showContinents" transition="slide-y-transition" offset-y>
           <template v-slot:activator="{ on, attrs }">
@@ -98,11 +106,12 @@ const dialog = ref(false)
 const selectedCountry = ref({})
 const continentImages = {
   'Europa': 'https://www.mundoprimaria.com/wp-content/uploads/2021/08/paises-de-europa.jpg',
-  'America': 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Location_Americas.png',
-  'Asia': 'https://upload.wikimedia.org/wikipedia/commons/7/74/Location_Asia.png',
-  'Oceania': 'https://upload.wikimedia.org/wikipedia/commons/3/37/Location_Oceania.png',
-  'Africa': 'https://upload.wikimedia.org/wikipedia/commons/3/36/Location_Africa.png'
+  'America': 'https://img.freepik.com/vector-premium/america-mapa-diferentes-colores_184151-34.jpg',
+  'Asia': 'https://img.freepik.com/vector-premium/mapa-politico-asia-nombres-paises-ciudades-importantes-asia_476425-1498.jpg',
+  'Oceania': 'https://img.freepik.com/vector-premium/mapa-politico-oceania-nombres-paises-ciudades-importantes-oceania_476425-1512.jpg',
+  'Africa': 'https://img.freepik.com/vector-premium/mapa-politico-africa-nombres-paises-africa_476425-1506.jpg'
 }
+
 
 
 const getCountryImage = async (countryName) => {
@@ -219,4 +228,15 @@ onMounted(async () => {
   font-size: 1.1rem;
   font-weight: bold;
 }
+.search-bar-wrapper {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  padding: 1rem; /* Espaciado opcional alrededor */
+}
+
+.search-bar {
+  max-width: 500px; /* Ancho máximo de la barra de búsqueda */
+  width: 100%;
+}
+
 </style>
