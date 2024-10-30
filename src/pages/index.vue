@@ -31,7 +31,13 @@
                 @click="setContinentFilter(continent)"
               >
                 <v-card flat class="pa-2 text-center">
-                  <v-img :src="continentImages[continent]" height="70px"></v-img>
+                  <v-img
+                    :src="continentImages[continent]"
+                    height="70px"
+                    alt="Imagen no disponible"
+                    @error="continentImages[continent] = 'https://s1.significados.com/foto/continentes-hoy.jpg?class=article'"
+
+                  ></v-img>
                   <div>{{ continent }}</div>
                 </v-card>
               </v-col>
@@ -102,11 +108,13 @@ const showContinents = ref(false)
 const dialog = ref(false)
 const selectedCountry = ref({})
 const continentImages = {
-  'Europa': 'https://www.mundoprimaria.com/wp-content/uploads/2021/08/paises-de-europa.jpg',
-  'America': 'https://img.freepik.com/vector-premium/america-mapa-diferentes-colores_184151-34.jpg',
-  'Asia': 'https://img.freepik.com/vector-premium/mapa-politico-asia-nombres-paises-ciudades-importantes-asia_476425-1498.jpg',
-  'Oceania': 'https://img.freepik.com/vector-premium/mapa-politico-oceania-nombres-paises-ciudades-importantes-oceania_476425-1512.jpg',
-  'Africa': 'https://img.freepik.com/vector-premium/mapa-politico-africa-nombres-paises-africa_476425-1506.jpg'
+  'Europe': "https://static.vecteezy.com/system/resources/previews/017/517/768/non_2x/political-map-of-europe-continent-vector.jpg",
+  'Asia': 'https://www.shutterstock.com/image-vector/main-regions-asia-political-map-260nw-1692359656.jpg',
+  'North America': 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/North_American_cultural_areas.png/220px-North_American_cultural_areas.png',
+  'Antarctica': 'https://www.legaltoday.com/wp-content/uploads/2020/12/antartida1.jpg',
+  'South America': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Mapa_pol%C3%ADtico_Am%C3%A9rica_do_Sul.svg/300px-Mapa_pol%C3%ADtico_Am%C3%A9rica_do_Sul.svg.png',
+  'Oceania': 'https://concepto.de/wp-content/uploads/2020/02/oceania-mapa.jpg',
+  'Africa':'https://www.mundoprimaria.com/wp-content/uploads/2021/08/africa-mapa-politico.jpg',
 }
 
 
@@ -165,6 +173,21 @@ const clearContinentFilter = () => {
   filterContinent.value = null
   showContinents.value = false
 }
+const getContinentImage = async (continentName) => {
+  try {
+    const response = await axios.get('https://api.unsplash.com/search/photos', {
+      params: {
+        client_id: unsplashAccessKey,
+        query: continentName,
+        per_page: 1,
+      },
+    })
+    return response.data.results[0]?.urls.regular || null
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
 
 onMounted(async () => {
   try {
@@ -200,6 +223,7 @@ onMounted(async () => {
       })
     )
     countries.value = countriesData
+
   } catch (error) {
     console.error(error)
   }
