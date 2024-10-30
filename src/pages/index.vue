@@ -6,19 +6,28 @@
         <!--Barra de busqueda de paises -->
         <v-row justify="center">
           <v-col cols="12" md="6">
-            <div class="search-bar-wrapper">
-              <v-text-field
-                v-model="searchQuery"
-                placeholder="Escribe el país que deseas ver"
-                append-inner-icon="mdi-magnify"
-                single-line
-                outlined
-                clearable
-                class="search-bar"
-                @click:append-inner="showContinents = !showContinents"
-              ></v-text-field>
-            </div>
-          </v-col>
+  <div class="search-bar-wrapper">
+    <v-card class="mx-auto" color="surface-light" max-width="400">
+      <v-card-text>
+        <v-text-field
+          v-model="searchQuery"
+          :loading="loading"
+          append-inner-icon="mdi-magnify"
+          density="compact"
+          label="Escribe el país que deseas ver"
+          variant="solo"
+          hide-details
+          single-line
+          outlined
+          clearable
+          class="search-bar"
+          @click:append-inner="toggleContinents"
+        ></v-text-field>
+      </v-card-text>
+    </v-card>
+  </div>
+</v-col>
+
         </v-row>
         <!--Menu de continenstes-->
         <v-dialog v-model="showContinents" max-width="400px">
@@ -117,6 +126,16 @@ const continentImages = {
   'Africa':'https://www.mundoprimaria.com/wp-content/uploads/2021/08/africa-mapa-politico.jpg',
 }
 
+const loading = ref(false)
+
+const toggleContinents = () => {
+  loading.value = true
+
+  setTimeout(() => {
+    loading.value = false
+    showContinents.value = !showContinents.value
+  }, 1000) // simula un breve tiempo de carga
+}
 
 
 const getCountryImage = async (countryName) => {
@@ -232,15 +251,15 @@ onMounted(async () => {
 
 <style scoped>
 .search-bar-wrapper {
-  display: flex;
-  justify-content: center; /* Centrar horizontalmente */
-  padding: 1rem; /* Espaciado opcional alrededor */
+  display:flexbox;
+  justify-content: center;
+  padding: 1rem;
 }
-
 .search-bar {
-  max-width: 500px; /* Ancho máximo de la barra de búsqueda */
+  max-width: 500px;
   width: 100%;
 }
+
 
 .continent-filter {
   padding: 8px;
