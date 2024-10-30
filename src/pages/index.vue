@@ -2,36 +2,33 @@
   <v-container>
     <v-row cols="5" md="6">
       <v-col>
-        <v-divider></v-divider>
+
         <!--Barra de busqueda de paises -->
         <v-row justify="center">
           <v-col cols="12" md="6">
-  <div class="search-bar-wrapper">
-    <v-card class="mx-auto" color="surface-light" max-width="400">
-      <v-card-text>
-        <v-text-field
-          v-model="searchQuery"
-          :loading="loading"
-          append-inner-icon="mdi-magnify"
-          density="compact"
-          label="Escribe el país que deseas ver"
-          variant="solo"
-          hide-details
-          single-line
-          outlined
-          clearable
-          class="search-bar"
-          @click:append-inner="toggleContinents"
-        ></v-text-field>
-      </v-card-text>
-    </v-card>
-  </div>
-</v-col>
-
+            <div class="search-bar-wrapper">
+              <v-card-text>
+                <v-text-field
+                  v-model="searchQuery"
+                  :loading="loading"
+                  append-inner-icon="mdi-magnify"
+                  density="compact"
+                  label="Escribe el país que deseas ver"
+                  variant="solo"
+                  hide-details
+                  single-line
+                  outlined
+                  clearable
+                  class="search-bar"
+                  @click:append-inner="toggleContinents"
+                ></v-text-field>
+              </v-card-text>
+             </div>
+          </v-col>
         </v-row>
         <!--Menu de continenstes-->
-        <v-dialog v-model="showContinents" max-width="400px">
-          <v-sheet class="continent-filter">
+        <v-dialog v-model="showContinents" max-width="400px" >
+          <v-sheet class="continent-filter" style="background-color:#E3F2FD">
             <v-row dense>
               <v-col
                 v-for="(continent, index) in continents"
@@ -39,7 +36,7 @@
                 cols="6"
                 @click="setContinentFilter(continent)"
               >
-                <v-card flat class="pa-2 text-center">
+                <v-card flat class="pa-2 text-center" style="background-color: #E3F2FD;">
                   <v-img
                     :src="continentImages[continent]"
                     height="70px"
@@ -51,7 +48,7 @@
                 </v-card>
               </v-col>
               <v-col cols="12" class="text-center">
-                <v-btn text @click="clearContinentFilter">Limpiar</v-btn>
+                <v-btn text @click="clearContinentFilter" style="background-color:#37474F;color: aliceblue;" >Limpiar</v-btn>
               </v-col>
             </v-row>
           </v-sheet>
@@ -59,7 +56,7 @@
       </v-col>
     </v-row>
 
-    <v-divider></v-divider>
+
 
     <v-row>
       <v-col

@@ -43,7 +43,7 @@
 
       <v-main style="background-color:#90CAF9;">
         <div class="pa-4">
-          <v-sheet border="dashed md" style="background-color:#90CAF9;" height="auto" rounded="lg" width="100%">
+          <v-sheet  style="background-color:#90CAF9;" height="auto" rounded="lg" width="100%">
             <router-view />
           </v-sheet>
         </div>
