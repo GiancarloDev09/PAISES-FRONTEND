@@ -2,29 +2,27 @@
   <v-container>
     <v-row cols="5" md="6">
       <v-col>
+        <v-divider></v-divider>
+        <!--Barra de busqueda de paises -->
         <v-row justify="center">
-  <v-col cols="12" md="6"> <!-- Ajusta el ancho con col, cols="12" ocupa todo el ancho en pantallas pequeñas -->
-    <div class="search-bar-wrapper">
-  <v-text-field
-    v-model="searchQuery"
-    placeholder="Escribe el país que deseas ver"
-    append-inner-icon="mdi-magnify"
-    single-line
-    outlined
-    clearable
-    class="search-bar"
-    @click:append-inner="showContinents = !showContinents"
-  ></v-text-field>
-</div>
-
-  </v-col>
-</v-row>
-
-
-        <v-menu v-model="showContinents" transition="slide-y-transition" offset-y>
-          <template v-slot:activator="{ on, attrs }">
-            <!-- Trigger sin cambios visibles, ya que está en el botón de buscar -->
-          </template>
+          <v-col cols="12" md="6">
+            <div class="search-bar-wrapper">
+              <v-text-field
+                v-model="searchQuery"
+                placeholder="Escribe el país que deseas ver"
+                append-inner-icon="mdi-magnify"
+                single-line
+                outlined
+                clearable
+                class="search-bar"
+                @click:append-inner="showContinents = !showContinents"
+              ></v-text-field>
+            </div>
+          </v-col>
+        </v-row>
+        <!--Menu de continenstes-->
+        <!-- Modal de continentes -->
+        <v-dialog v-model="showContinents" max-width="400px">
           <v-sheet class="continent-filter">
             <v-row dense>
               <v-col
@@ -43,7 +41,7 @@
               </v-col>
             </v-row>
           </v-sheet>
-        </v-menu>
+        </v-dialog>
       </v-col>
     </v-row>
 
@@ -58,8 +56,8 @@
         md="4"
         lg="3"
       >
-        <v-card class="mx-auto my-2" max-width="250" @click="selectCountry(country)">
-          <v-img :src="country.imageUrl || country.flagUrl" :alt="country.name" height="100px" cover></v-img>
+        <v-card class="mx-auto my-2" max-width="230" @click="selectCountry(country)">
+          <v-img :src="country.imageUrl || country.flagUrl" :alt="country.name" height="90px" cover></v-img>
           <v-card-item>
             <v-card-title class="text-subtitle-1">{{ country.name }}</v-card-title>
             <v-card-subtitle class="text-caption">{{ country.continent.name }}</v-card-subtitle>
@@ -210,14 +208,20 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.search-bar-wrapper {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  padding: 1rem; /* Espaciado opcional alrededor */
+}
+
 .search-bar {
-  max-width: 300px;
-  border-radius: 8px;
+  max-width: 500px; /* Ancho máximo de la barra de búsqueda */
+  width: 100%;
 }
 
 .continent-filter {
   padding: 8px;
-  width: 300px;
+  width: 100%; /* Asegura que el contenido se ajuste al ancho del diálogo */
 }
 
 .v-card {
@@ -228,11 +232,7 @@ onMounted(async () => {
   font-size: 1.1rem;
   font-weight: bold;
 }
-.search-bar-wrapper {
-  display: flex;
-  justify-content: center; /* Centrar horizontalmente */
-  padding: 1rem; /* Espaciado opcional alrededor */
-}
+
 
 .search-bar {
   max-width: 500px; /* Ancho máximo de la barra de búsqueda */
