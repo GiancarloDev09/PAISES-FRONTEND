@@ -21,7 +21,6 @@
           </v-col>
         </v-row>
         <!--Menu de continenstes-->
-        <!-- Modal de continentes -->
         <v-dialog v-model="showContinents" max-width="400px">
           <v-sheet class="continent-filter">
             <v-row dense>
