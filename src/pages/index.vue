@@ -4,30 +4,43 @@
       <v-col>
         <v-text-field
           v-model="searchQuery"
-          label="Buscar país"
-          prepend-icon="mdi-magnify"
+          placeholder="Escribe el país que deseas ver"
+          append-inner-icon="mdi-magnify"
+          single-line
+          outlined
           clearable
-          @click:prepend="showContinents = !showContinents"
-          density="compact"
-        >
-          <template v-slot:prepend-inner>
-            <v-list v-if="showContinents" density="compact">
-              <v-list-item
-                v-for="continent in continents"
-                :key="continent"
+          class="search-bar"
+          @click:append-inner="showContinents = !showContinents"
+        ></v-text-field>
+
+        <v-menu v-model="showContinents" transition="slide-y-transition" offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <!-- Trigger sin cambios visibles, ya que está en el botón de buscar -->
+          </template>
+          <v-sheet class="continent-filter">
+            <v-row dense>
+              <v-col
+                v-for="(continent, index) in continents"
+                :key="index"
+                cols="6"
                 @click="setContinentFilter(continent)"
               >
-                {{ continent }}
-              </v-list-item>
-              <v-list-item @click="clearContinentFilter">
-                Limpiar
-              </v-list-item>
-            </v-list>
-          </template>
-        </v-text-field>
+                <v-card flat class="pa-2 text-center">
+                  <v-img :src="continentImages[continent]" height="70px"></v-img>
+                  <div>{{ continent }}</div>
+                </v-card>
+              </v-col>
+              <v-col cols="12" class="text-center">
+                <v-btn text @click="clearContinentFilter">Limpiar</v-btn>
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </v-menu>
       </v-col>
     </v-row>
+
     <v-divider></v-divider>
+
     <v-row>
       <v-col
         v-for="(country, index) in paginatedCountries"
@@ -46,6 +59,7 @@
         </v-card>
       </v-col>
     </v-row>
+
     <div class="text-center mt-4">
       <v-pagination v-model="currentPage" :length="Math.ceil(filteredCountries.length / itemsPerPage)" />
     </div>
@@ -74,7 +88,7 @@ import axios from 'axios'
 import { ref, onMounted, computed } from 'vue'
 
 const countries = ref([])
-const unsplashAccessKey = 'rEY13Kw7mWyJq1sUueOfAC7IGJmWq8i3HFkA02bE' // Reemplaza con tu Access Key
+const unsplashAccessKey = 'rEY13Kw7mWyJq1sUueOfAC7IGJmWq8i3HFkA02bE'
 const currentPage = ref(1)
 const itemsPerPage = 8
 const searchQuery = ref('')
@@ -82,6 +96,14 @@ const filterContinent = ref(null)
 const showContinents = ref(false)
 const dialog = ref(false)
 const selectedCountry = ref({})
+const continentImages = {
+  'Europa': 'https://www.mundoprimaria.com/wp-content/uploads/2021/08/paises-de-europa.jpg',
+  'America': 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Location_Americas.png',
+  'Asia': 'https://upload.wikimedia.org/wikipedia/commons/7/74/Location_Asia.png',
+  'Oceania': 'https://upload.wikimedia.org/wikipedia/commons/3/37/Location_Oceania.png',
+  'Africa': 'https://upload.wikimedia.org/wikipedia/commons/3/36/Location_Africa.png'
+}
+
 
 const getCountryImage = async (countryName) => {
   try {
@@ -92,11 +114,7 @@ const getCountryImage = async (countryName) => {
         per_page: 1,
       },
     })
-    if (response.data.results.length > 0) {
-      return response.data.results[0].urls.regular
-    } else {
-      return null
-    }
+    return response.data.results[0]?.urls.regular || null
   } catch (error) {
     console.error(error)
     return null
@@ -165,24 +183,40 @@ onMounted(async () => {
         }
       `,
     })
-
     const countriesData = response.data.data.countries
-
-    // Obtener imágenes y banderas en paralelo
     await Promise.all(
       countriesData.map(async (country) => {
         country.imageUrl = await getCountryImage(country.name)
-        // Si no hay imagen de Unsplash, usar la bandera
         if (!country.imageUrl) {
           const flagResponse = await axios.get(`https://restcountries.com/v3.1/alpha/${country.code}`)
           country.flagUrl = flagResponse.data[0].flags.png
         }
       })
     )
-
     countries.value = countriesData
   } catch (error) {
     console.error(error)
   }
 })
 </script>
+
+<style scoped>
+.search-bar {
+  max-width: 300px;
+  border-radius: 8px;
+}
+
+.continent-filter {
+  padding: 8px;
+  width: 300px;
+}
+
+.v-card {
+  cursor: pointer;
+}
+
+.v-card-title {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+</style>
