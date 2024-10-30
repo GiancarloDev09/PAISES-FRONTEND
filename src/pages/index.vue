@@ -15,11 +15,11 @@
               <v-list-item
                 v-for="continent in continents"
                 :key="continent"
-                @click="filterContinent = continent; showContinents = false"
+                @click="setContinentFilter(continent)"
               >
                 {{ continent }}
               </v-list-item>
-              <v-list-item @click="filterContinent = null; showContinents = false">
+              <v-list-item @click="clearContinentFilter">
                 Limpiar
               </v-list-item>
             </v-list>
@@ -47,7 +47,7 @@
       </v-col>
     </v-row>
     <div class="text-center mt-4">
-      <v-pagination v-model="currentPage" :length="Math.ceil(countries.length / itemsPerPage)" />
+      <v-pagination v-model="currentPage" :length="Math.ceil(filteredCountries.length / itemsPerPage)" />
     </div>
 
     <!-- Modal para mostrar detalles del país -->
@@ -130,6 +130,16 @@ const paginatedCountries = computed(() => {
 const selectCountry = (country) => {
   selectedCountry.value = country
   dialog.value = true
+}
+
+const setContinentFilter = (continent) => {
+  filterContinent.value = continent
+  showContinents.value = false
+}
+
+const clearContinentFilter = () => {
+  filterContinent.value = null
+  showContinents.value = false
 }
 
 onMounted(async () => {
